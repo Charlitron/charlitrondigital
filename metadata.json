@@ -1,0 +1,6 @@
+{
+  "name": "Charlitron Digital",
+  "description": "Soluciones digitales para negocios: webs, apps, automatizaciones e IA para simplificar procesos, vender mejor y ahorrar tiempo.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

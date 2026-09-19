@@ -1,0 +1,106 @@
+import React, { useState, useEffect } from 'react';
+import { Header } from './components/Header';
+import { Hero } from './components/Hero';
+import { WhatWeDo } from './components/WhatWeDo';
+import { NeedsSelector } from './components/NeedsSelector';
+import { EvidenceSection } from './components/EvidenceSection';
+import { HowWeWork } from './components/HowWeWork';
+import { ComplementaryServices } from './components/ComplementaryServices';
+import { ContactSection } from './components/ContactSection';
+import { Footer } from './components/Footer';
+import { FloatingWhatsApp } from './components/FloatingWhatsApp';
+import { LegalPage, LegalTab } from './components/LegalPage';
+import { CookieConsent } from './components/CookieConsent';
+
+export default function App() {
+  const [legalTab, setLegalTab] = useState<LegalTab | null>(null);
+
+  // Sync with window hash for direct linking / back navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.toLowerCase();
+      if (hash.includes('privacidad') || hash === '#legal-privacidad' || hash === '#aviso-privacidad') {
+        setLegalTab('privacidad');
+      } else if (hash.includes('terminos') || hash === '#legal-terminos' || hash === '#terminos-condiciones') {
+        setLegalTab('terminos');
+      } else if (hash.includes('cookie') || hash === '#legal-cookies' || hash === '#politica-cookies') {
+        setLegalTab('cookies');
+      } else if (hash.includes('legal')) {
+        setLegalTab('privacidad');
+      } else if (!hash || hash === '#') {
+        setLegalTab(null);
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const handleOpenLegal = (tab: LegalTab) => {
+    setLegalTab(tab);
+    window.location.hash = `legal-${tab}`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToMain = () => {
+    setLegalTab(null);
+    if (window.location.hash.startsWith('#legal')) {
+      window.history.pushState(null, '', window.location.pathname + window.location.search);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (legalTab) {
+    return (
+      <>
+        <LegalPage
+          initialTab={legalTab}
+          onBack={handleBackToMain}
+        />
+        <CookieConsent onOpenLegal={handleOpenLegal} />
+      </>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#09090b] text-[#f4f4f5] flex flex-col selection:bg-amber-400 selection:text-zinc-950">
+      {/* Sleek Navigation Bar */}
+      <Header onOpenLegal={handleOpenLegal} />
+
+      {/* Main landing sections */}
+      <main className="flex-1">
+        {/* 1. Hero: First full viewport */}
+        <Hero />
+
+        {/* 2. Qué Hacemos: 4 visual cards */}
+        <WhatWeDo />
+
+        {/* 3. Hablar de necesidades: 6 big action buttons to WhatsApp */}
+        <NeedsSelector />
+
+        {/* 4. Evidencia: Real projects showcase with interactive mockups */}
+        <EvidenceSection />
+
+        {/* 5. Cómo trabajamos: 4 clear steps */}
+        <HowWeWork />
+
+        {/* 6. Servicios complementarios: Charlitron Agencia (discreet) */}
+        <ComplementaryServices />
+
+        {/* 7. Contacto final: Cuéntanos qué quieres mejorar */}
+        <ContactSection />
+      </main>
+
+      {/* Footer with Legal links */}
+      <Footer onOpenLegal={handleOpenLegal} />
+
+      {/* Persistent floating WhatsApp button */}
+      <FloatingWhatsApp />
+
+      {/* Cookie consent banner */}
+      <CookieConsent onOpenLegal={handleOpenLegal} />
+    </div>
+  );
+}
+
